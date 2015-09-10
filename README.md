@@ -35,3 +35,6 @@ So, I strongly suggest that you run this proxy on the same machine as your appli
 
 # User restrictions
 There is no user restrictions / filtering at all implemented in this proxy. Thus, I would suggest you to make sure that the proxy port is closed for the outside world.
+
+# Why Java
+Because it's portable :)
