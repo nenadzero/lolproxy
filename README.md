@@ -38,3 +38,6 @@ There is no user restrictions / filtering at all implemented in this proxy. Thus
 
 # Why Java
 Because it's portable :)
+
+
+Software is provided without warranty and the software author/license owner cannot be held liable for damages.
