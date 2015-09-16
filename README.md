@@ -49,6 +49,6 @@ java -jar lolproxy.jar [-port <Port>] [-proxyTimeout <ProxyTimeout>] [-minWaitAf
 - minWaitAfter429 is the minimum delay the proxy will wait after an http429 from Riot before allowing requests again. In milliseconds. By default 3000.
 - retryAfterTimeIncreaseAfter429 is the delay to add to the Retry-After header returned by Riot. In milliseconds. By default 1000.
 - maxRequestsPerSecond is the maximum requests per second the proxy will allow. By default 220.
-- threadsCount is the number of threads the proxy will use. You cannot have more parallel requests on Riot's server than this number of threads. 0 for no limit. By default 100.
+- threadsCount is the number of threads the proxy will use. You cannot have more parallel requests on Riot's server than this number of threads. 0 for no limit. By default 100. 
 
 Software is provided without warranty and the software author/license owner cannot be held liable for damages.
