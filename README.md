@@ -42,13 +42,15 @@ Because it's portable :)
 
 # Usage
 Prerequisite: jdk 7+ installed on the machine
-To run the project, simply type
+To run the project, simply download the binary here: https://github.com/trebonius0/lolproxy/releases and type
 java -jar lolproxy.jar [-port <Port>] [-proxyTimeout <ProxyTimeout>] [-minWaitAfter429 <MinWaitAfter429>] [-retryAfterTimeIncreaseAfter429 <RetryAfterTimeIncreaseAfter429>] [-maxRequestsPerSecond <MaxRequestsPerSecond>] [-threadsCount <ThreadsCount>]
 - port is the port to use for the proxy. By default: 23830
 - proxyTimeout is the timeout after which the proxy will close the call to the Riot's servers. In milliseconds. By default 60000.
 - minWaitAfter429 is the minimum delay the proxy will wait after an http429 from Riot before allowing requests again. In milliseconds. By default 3000.
 - retryAfterTimeIncreaseAfter429 is the delay to add to the Retry-After header returned by Riot. In milliseconds. By default 1000.
 - maxRequestsPerSecond is the maximum requests per second the proxy will allow. By default 220.
-- threadsCount is the number of threads the proxy will use. You cannot have more parallel requests on Riot's server than this number of threads. 0 for no limit. By default 100.
+- threadsCount is the number of threads the proxy will use. You cannot have more parallel requests on Riot's server than this number of threads. 0 for no limit. By default 100. 
 
+
+# Warranty
 Software is provided without warranty and the software author/license owner cannot be held liable for damages.
