@@ -105,6 +105,8 @@ public class LolProxyTask implements HttpHandler {
                 }
             } catch (Exception ex2) {
                 System.err.println("[" + (new Date()) + "] Cannot send http 500: " + ex2);
+            } finally {
+                he.close();
             }
         }
     }
