@@ -96,6 +96,15 @@ public class LolProxyTask implements HttpHandler {
                     os.write(response);
                 }
             }
+        } catch (IOException ex) {
+            try {
+                System.err.println("[" + (new Date()) + "] IOException: " + ex);
+                he.getRequestBody().close();
+                he.getResponseBody().close();
+                he.close();
+            } catch (Exception ex2) {
+                System.err.println("[" + (new Date()) + "] Error when closing streams: " + ex2);
+            }
         } catch (Exception ex) {
             System.err.println("[" + (new Date()) + "] Unexpected exception: " + ex);
             try {
@@ -105,8 +114,6 @@ public class LolProxyTask implements HttpHandler {
                 }
             } catch (Exception ex2) {
                 System.err.println("[" + (new Date()) + "] Cannot send http 500: " + ex2);
-            } finally {
-                he.close();
             }
         }
     }
