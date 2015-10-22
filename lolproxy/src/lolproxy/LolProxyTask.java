@@ -34,13 +34,15 @@ public class LolProxyTask implements HttpHandler {
             long requestId = requestMaxId.incrementAndGet();
 
             String targetUrl = he.getRequestURI().toString();
+            String host = he.getRequestURI().getHost();
+
             if (upgradeToHttps) {
                 targetUrl = targetUrl.replace("http://", "https://");
             }
 
             System.out.println("[" + (new Date()) + "]\t#" + requestId + "\tReceived Request to " + targetUrl);
 
-            if (!this.http429RequestManager.canRunRequest()) {
+            if (!this.http429RequestManager.canRunRequest(host)) {
                 this.returnHttp429ToClient(he, "Too recent Http429 from Riot");
 
                 System.out.println("[" + (new Date()) + "]\t#" + requestId + "\tRequest blocked by proxy (Too recent Http429 from Riot) to " + targetUrl + "\t" + (System.currentTimeMillis() - startTime) + "ms" + "\t" + 429);
@@ -82,7 +84,7 @@ public class LolProxyTask implements HttpHandler {
                     + "\t" + (System.currentTimeMillis() - startTime) + "ms"
                     + "\t" + responseCode);
 
-            this.reportHttp429IfNeeded(downloadTask);
+            this.reportHttp429IfNeeded(host, downloadTask);
 
             if (response == null) {
                 response = "LoLProxy: NoData".getBytes();
@@ -126,7 +128,7 @@ public class LolProxyTask implements HttpHandler {
         }
     }
 
-    private void reportHttp429IfNeeded(RequestDownloadTask downloadTask) {
+    private void reportHttp429IfNeeded(String requestHost, RequestDownloadTask downloadTask) {
         Integer responseCode = downloadTask.getResponseCode();
         if (responseCode != null && responseCode == 429) {
             Integer retryAfter = null;
@@ -140,9 +142,9 @@ public class LolProxyTask implements HttpHandler {
                 }
             }
 
-            System.out.println("[" + (new Date()) + "]\tHttp429 received from Riot with RetryAfter: " + retryAfter);
+            System.out.println("[" + (new Date()) + "]\tHttp429 received from Riot for \"" + requestHost + "\" with RetryAfter: " + retryAfter);
 
-            this.http429RequestManager.reportHttp429(retryAfter);
+            this.http429RequestManager.reportHttp429(requestHost, retryAfter);
         }
     }
 

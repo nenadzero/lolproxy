@@ -1,17 +1,24 @@
 package lolproxy;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Http429RequestManager {
 
     private final int minWait;
     private final int retryAfterTimeIncrease;
-    private long nextAuthorizedCall = 0;
+    private Map<String, Long> nextAuthorizedCalls = new HashMap<>();
 
     public Http429RequestManager(int minWait, int retryAfterTimeIncrease) {
         this.minWait = minWait;
         this.retryAfterTimeIncrease = retryAfterTimeIncrease;
     }
 
-    public synchronized void reportHttp429(Integer retryAfterHeaderValue) {
+    public synchronized void reportHttp429(String host, Integer retryAfterHeaderValue) {
         if (retryAfterHeaderValue == null) {
             retryAfterHeaderValue = 0;
         }
@@ -28,11 +35,36 @@ public class Http429RequestManager {
 
         int wait = Math.max(retryAfterHeaderValue, minWait);
 
-        this.nextAuthorizedCall = Math.max(this.getTime() + wait, this.nextAuthorizedCall);
+        try {
+            for (InetAddress address : InetAddress.getAllByName(host)) {
+                Long nextAuthorizedCall = this.nextAuthorizedCalls.get(address.getHostAddress());
+
+                if (nextAuthorizedCall == null) {
+                    nextAuthorizedCall = 0L;
+                }
+
+                this.nextAuthorizedCalls.put(address.getHostAddress(), Math.max(this.getTime() + wait, nextAuthorizedCall));
+            }
+        } catch (UnknownHostException ex) {
+            ex.printStackTrace();
+        }
     }
 
-    public synchronized boolean canRunRequest() {
-        return this.getTime() >= this.nextAuthorizedCall;
+    public synchronized boolean canRunRequest(String host) {
+        try {
+            for (InetAddress address : InetAddress.getAllByName(host)) {
+                Long nextAuthorizedCall = this.nextAuthorizedCalls.get(address.getHostAddress());
+
+                if (nextAuthorizedCall != null && nextAuthorizedCall > this.getTime()) {
+                    return false;
+                }
+
+            }
+
+            return true;
+        } catch (UnknownHostException ex) {
+            return true;
+        }
     }
 
     long getTime() {
